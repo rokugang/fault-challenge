@@ -1,0 +1,177 @@
+{
+  "source_path": "fault_example.csv",
+  "metadata": {
+    "trouble_code_fraction": 0.0,
+    "source_path": "C:\\Users\\noded\\Documents\\client-work\\doutor\\ml_challenge\\datasets\\fault_example.csv"
+  },
+  "coverage": {
+    "row_count": 100,
+    "coverage_pct": {
+      "Temperatura do líquido de arrefecimento do motor - CTS": 100.0,
+      "Carga calculada do motor": 100.0,
+      "Rotação do motor - RPM": 100.0,
+      "Altitude": 100.0
+    },
+    "missing_counts": {
+      "Temperatura do líquido de arrefecimento do motor - CTS": 0,
+      "Carga calculada do motor": 0,
+      "Rotação do motor - RPM": 0,
+      "Altitude": 0
+    }
+  },
+  "numeric_summary": {
+    "Sonda lambda - Banco 1, sensor 2": {
+      "mean": 0.4495000000000002,
+      "std": 0.0021794494717703385,
+      "min": 0.44,
+      "p05": 0.4495,
+      "p50": 0.45,
+      "p95": 0.45,
+      "max": 0.45
+    },
+    "Pressão barométrica": {
+      "mean": 1010.0,
+      "std": 0.0,
+      "min": 1010.0,
+      "p05": 1010.0,
+      "p50": 1010.0,
+      "p95": 1010.0,
+      "max": 1010.0
+    },
+    "Carga calculada do motor": {
+      "mean": 24.52,
+      "std": 7.9692910600629965,
+      "min": 0.0,
+      "p05": 20.95,
+      "p50": 22.0,
+      "p95": 30.0,
+      "max": 73.0
+    },
+    "Temperatura do líquido de arrefecimento do motor - CTS": {
+      "mean": 27.72,
+      "std": 4.547702716757109,
+      "min": 21.0,
+      "p05": 21.0,
+      "p50": 28.5,
+      "p95": 33.0,
+      "max": 34.0
+    },
+    "Ajuste de combustível de curto prazo - Banco 1": {
+      "mean": -2.72,
+      "std": 4.375111427152456,
+      "min": -13.0,
+      "p05": -12.0,
+      "p50": 0.0,
+      "p95": 2.0,
+      "max": 4.0
+    },
+    "Ajuste de combustível de longo prazo - Banco 1": {
+      "mean": 1.0,
+      "std": 0.0,
+      "min": 1.0,
+      "p05": 1.0,
+      "p50": 1.0,
+      "p95": 1.0,
+      "max": 1.0
+    },
+    "Pressão no coletor de admissão - MAP": {
+      "mean": 374.7,
+      "std": 149.88298769373395,
+      "min": 300.0,
+      "p05": 300.0,
+      "p50": 320.0,
+      "p95": 627.999999999999,
+      "max": 1010.0
+    },
+    "Tensão do módulo": {
+      "mean": 13.298499999999999,
+      "std": 0.8442610674430036,
+      "min": 10.28,
+      "p05": 11.79,
+      "p50": 13.87,
+      "p95": 13.96,
+      "max": 14.05
+    },
+    "Rotação do motor - RPM": {
+      "mean": 1146.38,
+      "std": 383.9226427289748,
+      "min": 0.0,
+      "p05": 605.35,
+      "p50": 1253.0,
+      "p95": 1505.6499999999996,
+      "max": 2255.0
+    },
+    "Carga absoluta do motor": {
+      "mean": 22.12,
+      "std": 7.552853765299577,
+      "min": 0.0,
+      "p05": 18.0,
+      "p50": 21.0,
+      "p95": 27.0,
+      "max": 62.0
+    },
+    "Posição relativa da borboleta - TPS": {
+      "mean": 3.32,
+      "std": 1.1906300852909772,
+      "min": 2.0,
+      "p05": 2.0,
+      "p50": 3.5,
+      "p95": 5.0,
+      "max": 8.0
+    },
+    "Temperatura do ar admitido - ACT": {
+      "mean": 20.99,
+      "std": 0.09949874371066196,
+      "min": 20.0,
+      "p05": 21.0,
+      "p50": 21.0,
+      "p95": 21.0,
+      "max": 21.0
+    },
+    "Temperatura do ar ambiente": {
+      "mean": 20.92,
+      "std": 0.36551333764994126,
+      "min": 19.0,
+      "p05": 20.95,
+      "p50": 21.0,
+      "p95": 21.0,
+      "max": 21.0
+    },
+    "Posição absoluta da borboleta - Sensor B": {
+      "mean": 14.06,
+      "std": 1.1119352499134112,
+      "min": 12.0,
+      "p05": 13.0,
+      "p50": 14.0,
+      "p95": 16.0,
+      "max": 16.0
+    },
+    "Posição absoluta da borboleta - TPS": {
+      "mean": 13.69,
+      "std": 1.3468110483657312,
+      "min": 12.0,
+      "p05": 12.0,
+      "p50": 14.0,
+      "p95": 15.0,
+      "max": 16.0
+    },
+    "Nº de falhas na memória": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "p05": 0.0,
+      "p50": 0.0,
+      "p95": 0.0,
+      "max": 0.0
+    },
+    "Altitude": {
+      "mean": 19.0,
+      "std": 0.0,
+      "min": 19.0,
+      "p05": 19.0,
+      "p50": 19.0,
+      "p95": 19.0,
+      "max": 19.0
+    }
+  }
+}

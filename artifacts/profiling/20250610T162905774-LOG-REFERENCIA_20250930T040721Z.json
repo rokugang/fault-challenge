@@ -1,0 +1,33 @@
+{
+  "source_path": "datasets\\references\\20250610T162905774-LOG-REFERENCIA.csv",
+  "metadata": {
+    "trouble_code_fraction": 1.0,
+    "source_path": "datasets\\references\\20250610T162905774-LOG-REFERENCIA.csv"
+  },
+  "coverage": {
+    "row_count": 1300,
+    "coverage_pct": {
+      "Temperatura do líquido de arrefecimento do motor - CTS": 100.0,
+      "Carga calculada do motor": 100.0,
+      "Rotação do motor - RPM": 100.0,
+      "Altitude": 100.0
+    },
+    "missing_counts": {
+      "Temperatura do líquido de arrefecimento do motor - CTS": 0,
+      "Carga calculada do motor": 0,
+      "Rotação do motor - RPM": 0,
+      "Altitude": 0
+    }
+  },
+  "numeric_summary": {
+    "Altitude": {
+      "mean": 49.0,
+      "std": 0.0,
+      "min": 49.0,
+      "p05": 49.0,
+      "p50": 49.0,
+      "p95": 49.0,
+      "max": 49.0
+    }
+  }
+}

@@ -74,3 +74,7 @@ class FaultDetector:
     def _low_voltage_condition(self, df: pd.DataFrame) -> pd.Series:
         voltage = df["Tensão do módulo"].astype(float)
         return voltage <= LOW_VOLTAGE_MIN_THRESHOLD
+    
+    def run_detection(self, df: pd.DataFrame) -> DetectionResult:
+        """Alias for evaluate() for backward compatibility with tests."""
+        return self.evaluate(df)

@@ -128,7 +128,7 @@ Run evaluation: `python scripts/improved_evaluation.py`
 
 **Interactive Dashboard** (Recommended):
 ```bash
-streamlit run app.py
+python -m streamlit run app.py
 ```
 Web interface with visualizations, SHAP plots, and real-time detection. See `DASHBOARD_README.md` for details.
 
@@ -223,6 +223,44 @@ Selected 5% rich-idle threshold represents P95 + 2σ margin (conservative approa
 - Calibration against labeled fault dataset
 - Probability calibration (Platt scaling or isotonic regression)
 - ROC curve analysis to establish optimal operating points
+
+## Verification
+
+### Quick Verification
+```bash
+# Run all tests
+python -m pytest --tb=no -q
+
+# Verify CLI detection
+python -m src.cli detect datasets/fault_example.csv
+
+# Run verification suite
+python scripts/run_verifications.py
+```
+
+### Full Verification
+```bash
+# 1. Tests (39 tests, should all pass)
+python -m pytest -v
+
+# 2. Model performance evaluation
+python scripts/improved_evaluation.py
+
+# 3. Cross-validation analysis
+python scripts/cross_validation.py
+
+# 4. Threshold tuning analysis
+python scripts/threshold_tuning.py
+
+# 5. Launch interactive dashboard
+python -m streamlit run app.py
+```
+
+Expected results:
+- All tests passing
+- ROC-AUC 0.916 on frame-level evaluation
+- CV: 0.863 +/- 0.015
+- Dashboard loads without errors
 
 ## Challenge Requirements
 

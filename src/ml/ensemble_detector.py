@@ -159,14 +159,18 @@ class EnsembleDetector(FaultDetector):
         if self.shap_explainer is not None:
             try:
                 top_features, _ = self.shap_explainer.explain_prediction(X)
-                return top_features[:5]
+                if top_features:
+                    return top_features[:5]
             except Exception as e:
-                print(f"SHAP failed: {e}, using z-score")
+                print(f"SHAP computation failed: {e}")
         
         # Fallback: z-score attribution
         feature_deviations = []
         
         for i, feature_name in enumerate(self.feature_names):
+            if i >= X.shape[1]:
+                break
+                
             feature_values = X[:, i]
             mean_val = np.mean(feature_values)
             std_val = np.std(feature_values)
@@ -185,8 +189,8 @@ class EnsembleDetector(FaultDetector):
         """
         Enhanced detection with feature-level explanations.
         """
-        # Get rule-based result
-        rule_result = self.run_detection(df)
+        # Get rule-based result from parent class
+        rule_result = super().run_detection(df)
         
         # Prepare features for ML
         X, feature_names = self._prepare_features(df)

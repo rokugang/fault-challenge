@@ -9,7 +9,7 @@ Streamlit web interface for real-time fault detection and analysis.
 pip install -r requirements.txt
 
 # Launch dashboard
-streamlit run app.py
+python -m streamlit run app.py
 ```
 
 The dashboard will open in your browser at `http://localhost:8501`
@@ -44,7 +44,7 @@ The dashboard will open in your browser at `http://localhost:8501`
 
 ## Example Usage
 
-1. Launch dashboard: `streamlit run app.py`
+1. Launch dashboard: `python -m streamlit run app.py`
 2. Upload `datasets/fault_example.csv`
 3. View detection result (should show FAULT DETECTED)
 4. Examine timeline to see rich-idle spike and low voltage
@@ -89,7 +89,7 @@ Upload CSV
 
 ### Local (Recommended)
 ```bash
-streamlit run app.py
+python -m streamlit run app.py
 ```
 
 ### Docker

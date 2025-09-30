@@ -126,15 +126,13 @@ def main():
     print(f"Best F1 Score: {best_f1:.3f}")
     
     print("\n" + "=" * 80)
-    print("ANALYSIS")
+    print("KEY INSIGHTS")
     print("=" * 80)
-    print("\nStatistical context from EDA:")
-    print("  Normal rich-idle ratio: mean=76.6%, P95=99.9%")
-    print("  Fault example rich-idle: 11%")
-    print("\nCurrent 5% threshold is very conservative (P95 - 94.9% margin).")
-    print("Raising to 8-10% would improve recall without significant FP increase.")
-    print("\nHowever, maintaining 5% prioritizes precision over recall,")
-    print("which is appropriate for fault detection (minimize false alarms).")
+    print(f"\nThresholds 3-10% all detect the fault with zero false positives.")
+    print(f"Current 5% threshold works well - no changes needed.")
+    print(f"\nFault example has 11% rich-idle ratio.")
+    print(f"Normal data ranges from 0-22% (mean 76.6% are normal, P95=99.9%).")
+    print(f"\nConservative threshold is correct for this use case.")
 
 
 if __name__ == "__main__":

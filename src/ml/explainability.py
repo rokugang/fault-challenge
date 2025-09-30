@@ -80,9 +80,11 @@ class SHAPExplainer:
                 sample_shap = np.abs(shap_values).mean(axis=0)
             
             # Sort features by absolute SHAP value
+            # Ensure we don't exceed bounds
+            n_features = min(len(sample_shap), len(self.feature_names))
             feature_importance = [
                 (self.feature_names[i], float(sample_shap[i]))
-                for i in range(len(sample_shap))
+                for i in range(n_features)
             ]
             feature_importance.sort(key=lambda x: abs(x[1]), reverse=True)
             

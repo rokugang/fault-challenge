@@ -167,22 +167,35 @@ if uploaded_file is not None:
         st.pyplot(fig)
         plt.close()
         
-        # Feature importance (if available)
-        if result.top_anomaly_features:
-            st.subheader("Top Anomalous Features")
+        # Feature attribution
+        if result.top_anomaly_features and len(result.top_anomaly_features) > 0:
+            st.subheader("Feature Attribution Analysis")
             
-            # Extract feature names and scores
-            features = [f[0][:40] for f in result.top_anomaly_features[:10]]  # Truncate names
+            st.markdown("**Which sensors contributed most to the anomaly detection?**")
+            
+            features = [f[0][:45] for f in result.top_anomaly_features[:10]]
             scores = [abs(f[1]) for f in result.top_anomaly_features[:10]]
             
-            fig, ax = plt.subplots(figsize=(10, 5))
-            ax.barh(features, scores, color='#ff7f0e')
-            ax.set_xlabel('Anomaly Contribution', fontsize=10)
-            ax.set_title('Feature Attribution (SHAP or Z-Score)', fontsize=12)
+            fig, ax = plt.subplots(figsize=(11, 6))
+            bars = ax.barh(features, scores, color='#ff7f0e', edgecolor='black', linewidth=0.5)
+            ax.set_xlabel('Contribution to Anomaly Score', fontsize=11)
+            ax.set_title('Top 10 Features (SHAP Values or Z-Scores)', fontsize=12, fontweight='bold')
             ax.grid(True, alpha=0.3, axis='x')
+            ax.invert_yaxis()
+            
+            for i, (bar, score) in enumerate(zip(bars, scores)):
+                width = bar.get_width()
+                ax.text(width, bar.get_y() + bar.get_height()/2, 
+                       f'{score:.3f}', ha='left', va='center', fontsize=8, 
+                       bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.7))
+            
             plt.tight_layout()
             st.pyplot(fig)
             plt.close()
+            
+            st.caption("Higher values indicate stronger deviation from normal operating conditions.")
+        else:
+            st.info("Feature attribution requires ensemble detector with trained models.")
         
         # Distribution plots
         with st.expander("Feature Distributions"):

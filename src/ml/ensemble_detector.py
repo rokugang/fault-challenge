@@ -1,7 +1,9 @@
 """
 Ensemble ML Detector with Explainability
 
-Innovation: Instead of single model, use voting ensemble + SHAP for interpretability.
+Combines multiple anomaly detection models with weighted voting.
+Uses SHAP TreeExplainer for feature attribution.
+
 Author: Rohit Gangupantulu
 """
 from __future__ import annotations
@@ -30,11 +32,12 @@ class EnsembleDetector(FaultDetector):
     """
     Ensemble anomaly detector with explainability.
     
-    Innovation:
-    1. Voting ensemble (IsolationForest + LOF + Mahalanobis)
-    2. Feature importance from tree-based models
-    3. Anomaly attribution (which features are weird)
-    4. Calibrated confidence scores
+    Uses weighted voting across three models:
+    - IsolationForest (50%)
+    - LOF (30%)
+    - Mahalanobis (20%)
+    
+    Outputs confidence scores and feature attribution.
     """
     
     def __init__(self, models_dir: Optional[Path] = None, use_shap: bool = True):

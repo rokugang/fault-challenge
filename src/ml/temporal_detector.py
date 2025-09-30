@@ -30,9 +30,8 @@ class TemporalFaultDetector(FaultDetector):
     """
     Fault detector with temporal window aggregation.
     
-    Innovation: Instead of treating each frame independently, aggregates
-    fault indicators over 30-second windows to catch intermittent faults
-    and reduce noise-induced false positives.
+    Aggregates fault indicators over 30-second windows (50% overlap) instead
+    of treating frames independently. Reduces false positives from sensor noise.
     
     Args:
         window_size_sec: Window duration in seconds (default 30s)

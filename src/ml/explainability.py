@@ -22,8 +22,8 @@ class SHAPExplainer:
     """
     SHAP-based feature attribution for anomaly detection models.
     
-    Innovation: Uses TreeExplainer for IsolationForest to get exact
-    Shapley values instead of crude z-score approximations.
+    Uses TreeExplainer for IsolationForest to compute exact Shapley values.
+    Falls back to z-score approximation if SHAP unavailable.
     """
     
     def __init__(self, model, feature_names: List[str]):

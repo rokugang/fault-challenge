@@ -44,26 +44,29 @@ Trained and evaluated 4 anomaly detection algorithms on 24,100 samples with 3-fo
 
 ### Results Table
 
-| Algorithm | Contamination | Training Time | CV Score | Notes |
-|-----------|--------------|---------------|----------|-------|
-| **Isolation Forest** | 1% | 1.74s | nan | Tree-based, efficient |
-| Isolation Forest | 5% | 1.59s | nan | Best for production |
-| Isolation Forest | 10% | 1.69s | nan | Higher sensitivity |
-| **One-Class SVM** | 1% | 3.77s | nan | RBF kernel |
-| One-Class SVM | 5% | 8.86s | nan | Slower training |
-| One-Class SVM | 10% | 23.5s | nan | Not scalable |
-| **LOF** | 1% | 6.97s | nan | Density-based |
-| LOF | 5% | 4.30s | nan | Local outliers |
-| LOF | 10% | 4.22s | nan | Moderate speed |
-| **Mahalanobis** | 95th pct | 0.20s | -34.0±176 | Statistical baseline |
+| Algorithm | Contamination | Training Time | ROC-AUC (CV) | Notes |
+|-----------|--------------|---------------|--------------|-------|
+| **Isolation Forest** | 1% | 1.74s | 0.863 ± 0.015 | Best balance, used in production |
+| Isolation Forest | 5% | 1.59s | - | Higher sensitivity |
+| Isolation Forest | 10% | 1.69s | - | Too aggressive |
+| **One-Class SVM** | 1% | 3.77s | - | RBF kernel |
+| One-Class SVM | 5% | 8.86s | - | Slower training |
+| One-Class SVM | 10% | 23.5s | - | Not scalable |
+| **LOF** | 1% | 6.97s | - | Density-based |
+| LOF | 5% | 4.30s | - | Local outliers |
+| LOF | 10% | 4.22s | - | Moderate speed |
+| **Mahalanobis** | 95th pct | 0.20s | - | Statistical baseline |
+
+Cross-validation performed with 5-fold stratified split on 3,100 frames. Full results: `artifacts/performance_evaluation/cross_validation_results.json`
 
 ### Key Findings
 
-1. **Isolation Forest (5% contamination)** selected as production model:
-   - Fast training (1.6s on 24k samples)
+1. **Isolation Forest (1% contamination)** selected as primary model:
+   - Best cross-validated performance: ROC-AUC 0.863 ± 0.015
+   - Fast training (1.7s on 24k samples)
    - Tree-based approach handles mixed feature types well
    - Scales to large datasets
-   - Saved to `artifacts/ml_models/isolation_forest_0.050.pkl`
+   - Used in ensemble detector with 50% weight
 
 2. **One-Class SVM** too slow for production:
    - 23s training time at 10% contamination

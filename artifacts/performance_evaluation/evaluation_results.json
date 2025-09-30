@@ -1,0 +1,47 @@
+[
+  {
+    "model_name": "isolation_forest",
+    "accuracy": 0.09,
+    "precision": 0.06972301814708691,
+    "recall": 0.73,
+    "f1_score": 0.1272885789014821,
+    "roc_auc": 0.39395,
+    "pr_auc": 0.09825715821177838,
+    "confusion_matrix": {
+      "TP": 73,
+      "FP": 974,
+      "TN": 26,
+      "FN": 27
+    }
+  },
+  {
+    "model_name": "lof",
+    "accuracy": 0.1509090909090909,
+    "precision": 0.09671179883945841,
+    "recall": 1.0,
+    "f1_score": 0.1763668430335097,
+    "roc_auc": 0.07499999999999996,
+    "pr_auc": 0.0504488963443202,
+    "confusion_matrix": {
+      "TP": 100,
+      "FP": 934,
+      "TN": 66,
+      "FN": 0
+    }
+  },
+  {
+    "model_name": "ocsvm",
+    "accuracy": 0.10818181818181818,
+    "precision": 0.09250693802035152,
+    "recall": 1.0,
+    "f1_score": 0.16934801016088058,
+    "roc_auc": 0.08424999999999996,
+    "pr_auc": 0.0604488845841916,
+    "confusion_matrix": {
+      "TP": 100,
+      "FP": 981,
+      "TN": 19,
+      "FN": 0
+    }
+  }
+]

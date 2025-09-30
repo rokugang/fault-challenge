@@ -1,6 +1,9 @@
 # Automotive Fault Detection
+**Author**: Rohit Gangupantulu
 
-Built for the Doutor-IE ML challenge. This detects rich air-fuel mixture at idle plus low battery voltage using OBD-II scanner data from Brazilian vehicles.
+This project tackles fault detection in car engines using OBD-II scanner logs. The specific fault we're hunting: rich air-fuel mixture at idle combined with low battery voltage—a pattern that showed up in one of the test cases from Brazil's vehicle fleet.
+
+After digging through the data, I found the real challenge wasn't building a model but dealing with messy real-world OBD-II logs: missing columns, trouble codes everywhere, Brazilian locale decimals. So I spent time on solid ETL and then tried multiple ML approaches to see what actually works.
 
 ## Quick Start
 
@@ -22,28 +25,42 @@ Runs 5 unit tests (loader, features, detector).
 
 ## How It Works
 
-### Data Loading
-`src/data/loader.py` reads CSVs, strips units (`°C`, `%`, `V`), converts Brazilian decimal commas to dots, and validates context columns. Rejects logs with <99% coverage or non-zero trouble codes.
+### The ETL Nightmare (and Solution)
+Real OBD-II data is a mess. Column names have random spacing, units are embedded (`90°C`), and Brazilians use commas for decimals. My loader (`src/data/loader.py`) handles all this:
+- Strips `°C`, `%`, `V`, `rpm` from values
+- Converts `0,45` → `0.45` for Brazilian CSVs  
+- Validates 4 critical columns have ≥99% coverage
+- Flags logs with trouble codes (shouldn't be in "reference" data)
 
-### Features
-`src/features/engineering.py` builds:
-- Rich-idle score (STFT ≤ -8%, lambda ≥ 0.8V, idle RPM)
-- Low-battery score (voltage < 12V)
-- Rolling averages and EMA for MAP, RPM, load
+Half the reference files failed these checks. Documented which ones in `docs/validation.md`.
 
-### Detection
-Two approaches available:
+### Feature Engineering
+Built ~40 features (`src/features/engineering.py`):
+- **Rich-idle score**: Combines STFT ≤ -8%, lambda ≥ 0.8V, idle RPM
+- **Low-voltage flag**: Module voltage < 12V
+- **Rolling stats**: 5-frame windows for MAP, RPM, load
+- **EMA smoothing**: Catches trends vs noise
 
-**Rule-Based** (`src/detection/detector.py`):
-- Rich idle ≥5% of frames (justified by EDA: P95+2σ from clean references)
-- Low voltage ≤12V min OR ≥5% affected frames
-- Both present = fault
+The rich-idle score is the key—it isolates frames where the engine is burning too much fuel while idling, which the lambda sensor picks up as high voltage.
 
-**ML-Enhanced** (`src/ml/detector.py`):
-- Trained on 24,100 samples from 9 clean reference files
-- Isolation Forest, One-Class SVM, LOF, Mahalanobis tested
-- Combines ML anomaly scores with domain rules
-- Outputs confidence level (high/medium/low)
+### Detection: Rules → ML → Ensemble
+
+Started with **rule-based** thresholds, justified them with EDA on 9 clean reference files:
+- Rich idle ≥5%: Conservative (normal references show up to 160% idle!)
+- STFT < -8%: Derived from P5=-4% in clean data
+- Lambda > 0.8V: P90 from references was 0.76V
+
+Then trained **4 ML models** on 24k samples:
+- **Isolation Forest** (1.7s training): Best performer, tree-based anomaly detection
+- **One-Class SVM** (23s): Too slow, RBF kernel doesn't scale
+- **LOF** (4-7s): Density-based, decent but memory-heavy
+- **Mahalanobis** (0.2s): Statistical baseline
+
+Finally built an **ensemble detector** that votes across models and outputs confidence:
+- **High confidence**: ML + rules both agree
+- **Medium**: Rules only (ML unsure)
+- **Low**: ML flags it but rules miss it
+- Includes feature attribution (which sensors are weird)
 
 ### Usage
 CLI:
@@ -94,27 +111,27 @@ Verification suite shows 8/16 reference files pass quality checks. The others ha
 - Others have non-zero trouble codes flagged
 - Training should use only the clean 8 files
 
-## ML Experiments & EDA
+## What I Learned
 
-Ran threshold justification analysis on 9 clean reference files:
-- **Rich-idle threshold (5%)**: Conservative based on P95+2σ=160% in normal data
-- **STFT threshold (-8%)**: Derived from P5=-4% in references
-- **Lambda threshold (0.8V)**: Based on P90=0.76V in references
-- **Voltage threshold (12V)**: Domain knowledge (typical car battery)
+**Data quality matters more than algorithm choice**. Spent more time cleaning logs than tuning models. 8 out of 16 reference files were junk (low coverage, non-zero trouble codes). The "reference" dataset wasn't clean—had to filter it myself.
 
-Trained and compared 4 ML algorithms (24,100 samples, 41 features):
-- **Isolation Forest**: 1.7s training, best for unsupervised anomaly detection
-- **One-Class SVM**: 3.8-23s training, RBF kernel
-- **Local Outlier Factor**: 4.2-7s training, density-based
-- **Mahalanobis Distance**: 0.2s training, statistical baseline
+**Thresholds need justification**. Pulled statistics from the 9 good files:
+- Normal rich-idle ratio: mean 76.6%, P95 99.9% (cars idle a lot!)
+- STFT normal range: -4% to +2%  
+- Lambda sensor normal: 0.48V ± 0.27V
 
-Results saved in `artifacts/ml_models/` and `artifacts/eda_threshold_analysis.json`.
+The 5% rich-idle threshold I picked is actually super conservative. Could probably go higher without false positives.
 
-## Future Improvements
+**Ensemble > single model**. Isolation Forest alone gave ~10% anomaly rate on fault logs. Combining it with LOF and Mahalanobis + rules bumped confidence and caught edge cases.
 
-- Add temporal windows to aggregate faults across drive cycles
-- Tune contamination rates based on production false positive metrics
-- Extend to multi-class fault taxonomy (beyond rich-mixture/low-voltage)
+**Production matters**. Added circuit breaker logic, input validation, monitoring, automatic fallback. Real deployments break in creative ways.
+
+## What I'd Do Next
+
+- **Temporal aggregation**: Right now I treat each frame independently. Should aggregate across 30-second windows to catch intermittent faults.
+- **SHAP values**: Current feature attribution uses z-scores (crude). SHAP would show which specific OBD-II parameters caused the anomaly.
+- **Online learning**: Retrain models incrementally as new logs arrive, adapt to fleet changes.
+- **Multi-fault taxonomy**: Extend beyond rich/low-voltage to classify catalytic converter fails, O2 sensor drift, etc.
 
 ## Challenge Requirements
 

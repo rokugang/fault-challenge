@@ -53,18 +53,35 @@ class TemporalFaultDetector(FaultDetector):
     
     def _estimate_sampling_rate(self, df: pd.DataFrame) -> float:
         """
-        Estimate sampling rate from data.
+        Estimate sampling rate from data or row frequency.
         
-        Assumes roughly constant sampling (OBD-II typically 1-10 Hz).
+        Method 1: If timestamps exist, calculate from time deltas
+        Method 2: If no timestamps, estimate from row count (assume typical OBD-II scan duration)
+        Fallback: 1 Hz (conservative for OBD-II)
         """
+        # Try timestamp-based estimation
         if "timestamp" in df.columns:
-            timestamps = pd.to_datetime(df["timestamp"])
-            time_diffs = timestamps.diff().dt.total_seconds().dropna()
-            if len(time_diffs) > 0:
-                median_diff = time_diffs.median()
-                return 1.0 / median_diff if median_diff > 0 else 1.0
+            try:
+                timestamps = pd.to_datetime(df["timestamp"])
+                time_diffs = timestamps.diff().dt.total_seconds().dropna()
+                if len(time_diffs) > 0:
+                    median_diff = time_diffs.median()
+                    if median_diff > 0:
+                        return 1.0 / median_diff
+            except:
+                pass
         
-        # Fallback: assume 1 Hz
+        # Try heuristic: OBD-II scans usually 60-300 seconds
+        # If we have many samples, assume faster sampling
+        n_samples = len(df)
+        if n_samples > 300:
+            # Likely 2-5 Hz for long scans
+            return 3.0
+        elif n_samples > 100:
+            # Likely 1-2 Hz for medium scans
+            return 1.5
+        
+        # Conservative fallback: 1 Hz
         return 1.0
     
     def _create_windows(

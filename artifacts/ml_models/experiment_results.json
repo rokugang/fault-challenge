@@ -1,0 +1,141 @@
+[
+  {
+    "algorithm": "IsolationForest",
+    "params": {
+      "contamination": 0.01,
+      "n_estimators": 100
+    },
+    "cv_score_mean": NaN,
+    "cv_score_std": NaN,
+    "training_time": 1.7378954887390137,
+    "n_features": 41,
+    "n_samples": 24100,
+    "contamination": 0.01,
+    "notes": "Efficient tree-based anomaly detection"
+  },
+  {
+    "algorithm": "IsolationForest",
+    "params": {
+      "contamination": 0.05,
+      "n_estimators": 100
+    },
+    "cv_score_mean": NaN,
+    "cv_score_std": NaN,
+    "training_time": 1.5886857509613037,
+    "n_features": 41,
+    "n_samples": 24100,
+    "contamination": 0.05,
+    "notes": "Efficient tree-based anomaly detection"
+  },
+  {
+    "algorithm": "IsolationForest",
+    "params": {
+      "contamination": 0.1,
+      "n_estimators": 100
+    },
+    "cv_score_mean": NaN,
+    "cv_score_std": NaN,
+    "training_time": 1.6872227191925049,
+    "n_features": 41,
+    "n_samples": 24100,
+    "contamination": 0.1,
+    "notes": "Efficient tree-based anomaly detection"
+  },
+  {
+    "algorithm": "OneClassSVM",
+    "params": {
+      "nu": 0.01,
+      "kernel": "rbf"
+    },
+    "cv_score_mean": NaN,
+    "cv_score_std": NaN,
+    "training_time": 3.769763469696045,
+    "n_features": 41,
+    "n_samples": 24100,
+    "contamination": 0.01,
+    "notes": "SVM-based novelty detection with RBF kernel"
+  },
+  {
+    "algorithm": "OneClassSVM",
+    "params": {
+      "nu": 0.05,
+      "kernel": "rbf"
+    },
+    "cv_score_mean": NaN,
+    "cv_score_std": NaN,
+    "training_time": 8.855868816375732,
+    "n_features": 41,
+    "n_samples": 24100,
+    "contamination": 0.05,
+    "notes": "SVM-based novelty detection with RBF kernel"
+  },
+  {
+    "algorithm": "OneClassSVM",
+    "params": {
+      "nu": 0.1,
+      "kernel": "rbf"
+    },
+    "cv_score_mean": NaN,
+    "cv_score_std": NaN,
+    "training_time": 23.50920081138611,
+    "n_features": 41,
+    "n_samples": 24100,
+    "contamination": 0.1,
+    "notes": "SVM-based novelty detection with RBF kernel"
+  },
+  {
+    "algorithm": "LocalOutlierFactor",
+    "params": {
+      "contamination": 0.01,
+      "n_neighbors": 20
+    },
+    "cv_score_mean": NaN,
+    "cv_score_std": NaN,
+    "training_time": 6.970280408859253,
+    "n_features": 41,
+    "n_samples": 24100,
+    "contamination": 0.01,
+    "notes": "Density-based local outlier detection"
+  },
+  {
+    "algorithm": "LocalOutlierFactor",
+    "params": {
+      "contamination": 0.05,
+      "n_neighbors": 20
+    },
+    "cv_score_mean": NaN,
+    "cv_score_std": NaN,
+    "training_time": 4.30424952507019,
+    "n_features": 41,
+    "n_samples": 24100,
+    "contamination": 0.05,
+    "notes": "Density-based local outlier detection"
+  },
+  {
+    "algorithm": "LocalOutlierFactor",
+    "params": {
+      "contamination": 0.1,
+      "n_neighbors": 20
+    },
+    "cv_score_mean": NaN,
+    "cv_score_std": NaN,
+    "training_time": 4.21770715713501,
+    "n_features": 41,
+    "n_samples": 24100,
+    "contamination": 0.1,
+    "notes": "Density-based local outlier detection"
+  },
+  {
+    "algorithm": "Mahalanobis",
+    "params": {
+      "threshold_percentile": 95
+    },
+    "cv_score_mean": -33.999999998977586,
+    "cv_score_std": 176.21351105245486,
+    "training_time": 0.20361804962158203,
+    "n_features": 41,
+    "n_samples": 24100,
+    "contamination": 0.05,
+    "notes": "Statistical distance, threshold=105.51"
+  }
+]

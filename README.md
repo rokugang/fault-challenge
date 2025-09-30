@@ -65,10 +65,10 @@ Trained and evaluated 4 anomaly detection algorithms:
 
 | Algorithm | Training Time | Contamination | Performance | Production Suitability |
 |-----------|---------------|---------------|-------------|------------------------|
-| Isolation Forest | 1.7s | 5% | Best overall | ✓ Scalable |
-| One-Class SVM | 23.5s | 5% | Accurate but slow | ✗ Too slow |
-| LOF | 4.2-7.0s | 5% | Good local detection | △ Memory intensive |
-| Mahalanobis | 0.2s | 95th percentile | Fast baseline | △ Assumes Gaussian |
+| Isolation Forest | 1.7s | 5% | Best overall | Scalable |
+| One-Class SVM | 23.5s | 5% | Accurate but slow | Too slow |
+| LOF | 4.2-7.0s | 5% | Good local detection | Memory intensive |
+| Mahalanobis | 0.2s | 95th percentile | Fast baseline | Assumes Gaussian |
 
 Results persisted in `artifacts/ml_models/experiment_results.json`.
 
@@ -82,16 +82,29 @@ Integrated SHAP TreeExplainer for feature attribution on Isolation Forest predic
 Optional temporal windowing module aggregates fault indicators across 30-second windows (50% overlap) to reduce false positives from transient sensor noise. Requires ≥2 windows showing fault pattern before triggering. Sampling rate estimation: uses timestamps if available, otherwise heuristic based on row count (>300 rows=3Hz, >100 rows=1.5Hz, else 1Hz conservative fallback).
 
 ### Usage
-CLI:
+
+**Interactive Dashboard** (Recommended):
+```bash
+streamlit run app.py
+```
+Web interface with visualizations, SHAP plots, and real-time detection. See `DASHBOARD_README.md` for details.
+
+**CLI**:
 ```bash
 python -m src.cli detect datasets/fault_example.csv
 ```
 
-API:
+**REST API**:
 ```bash
 python -m src.cli serve  # starts on :8000
 curl -F "file=@datasets/fault_example.csv" http://localhost:8000/detect
 ```
+
+**Performance Evaluation**:
+```bash
+python scripts/evaluate_performance.py
+```
+Generates ROC curves, confusion matrices, and model comparison charts in `artifacts/performance_evaluation/`.
 
 ## Project Structure
 ```

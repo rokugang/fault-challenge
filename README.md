@@ -32,10 +32,18 @@ Runs 5 unit tests (loader, features, detector).
 - Rolling averages and EMA for MAP, RPM, load
 
 ### Detection
-`src/detection/detector.py` flags faults when:
-- Rich idle ≥5% of frames
+Two approaches available:
+
+**Rule-Based** (`src/detection/detector.py`):
+- Rich idle ≥5% of frames (justified by EDA: P95+2σ from clean references)
 - Low voltage ≤12V min OR ≥5% affected frames
 - Both present = fault
+
+**ML-Enhanced** (`src/ml/detector.py`):
+- Trained on 24,100 samples from 9 clean reference files
+- Isolation Forest, One-Class SVM, LOF, Mahalanobis tested
+- Combines ML anomaly scores with domain rules
+- Outputs confidence level (high/medium/low)
 
 ### Usage
 CLI:
@@ -86,12 +94,27 @@ Verification suite shows 8/16 reference files pass quality checks. The others ha
 - Others have non-zero trouble codes flagged
 - Training should use only the clean 8 files
 
-## What Could Be Better
+## ML Experiments & EDA
 
-Current approach uses rule-based thresholds, not actual ML. To improve, what I will do as next step:
-- Train isolation forest or autoencoder on clean reference features
-- Add temporal windows to catch transient faults better
-- Tune thresholds based on false positive rate from production data
+Ran threshold justification analysis on 9 clean reference files:
+- **Rich-idle threshold (5%)**: Conservative based on P95+2σ=160% in normal data
+- **STFT threshold (-8%)**: Derived from P5=-4% in references
+- **Lambda threshold (0.8V)**: Based on P90=0.76V in references
+- **Voltage threshold (12V)**: Domain knowledge (typical car battery)
+
+Trained and compared 4 ML algorithms (24,100 samples, 41 features):
+- **Isolation Forest**: 1.7s training, best for unsupervised anomaly detection
+- **One-Class SVM**: 3.8-23s training, RBF kernel
+- **Local Outlier Factor**: 4.2-7s training, density-based
+- **Mahalanobis Distance**: 0.2s training, statistical baseline
+
+Results saved in `artifacts/ml_models/` and `artifacts/eda_threshold_analysis.json`.
+
+## Future Improvements
+
+- Add temporal windows to aggregate faults across drive cycles
+- Tune contamination rates based on production false positive metrics
+- Extend to multi-class fault taxonomy (beyond rich-mixture/low-voltage)
 
 ## Challenge Requirements
 

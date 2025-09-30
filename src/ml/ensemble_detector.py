@@ -37,14 +37,20 @@ class EnsembleDetector(FaultDetector):
     4. Calibrated confidence scores
     """
     
-    def __init__(self, models_dir: Optional[Path] = None):
+    def __init__(self, models_dir: Optional[Path] = None, use_shap: bool = True):
         super().__init__()
         self.models = {}
         self.weights = {}
         self.feature_names = []
+        self.shap_explainer = None
+        self.use_shap = use_shap
         
         if models_dir and models_dir.exists():
             self._load_ensemble(models_dir)
+            
+            # Auto-initialize SHAP if IsolationForest loaded
+            if use_shap and "isolation_forest" in self.models:
+                self._init_shap()
     
     def _load_ensemble(self, models_dir: Path):
         """Load multiple models for voting."""
@@ -122,17 +128,39 @@ class EnsembleDetector(FaultDetector):
         
         return ensemble_score, individual_scores
     
+    def _init_shap(self):
+        """Initialize SHAP explainer automatically."""
+        try:
+            from src.ml.explainability import SHAPExplainer, SHAP_AVAILABLE
+            
+            if SHAP_AVAILABLE and "isolation_forest" in self.models:
+                self.shap_explainer = SHAPExplainer(
+                    self.models["isolation_forest"],
+                    self.feature_names
+                )
+                print("SHAP explainer initialized for IsolationForest")
+        except Exception as e:
+            print(f"SHAP initialization failed: {e}. Using z-score fallback.")
+            self.shap_explainer = None
+    
     def _explain_anomalies(self, df: pd.DataFrame, X: np.ndarray) -> List[Tuple[str, float]]:
         """
         Identify which features contribute most to anomaly.
         
-        Simple heuristic: Z-score deviation from training mean.
-        For production, use SHAP values.
+        Uses SHAP if available, falls back to z-scores.
         """
         if not self.feature_names:
             return []
         
-        # Compute z-scores for each feature
+        # Try SHAP first
+        if self.shap_explainer is not None:
+            try:
+                top_features, _ = self.shap_explainer.explain_prediction(X)
+                return top_features[:5]
+            except Exception as e:
+                print(f"SHAP failed: {e}, using z-score")
+        
+        # Fallback: z-score attribution
         feature_deviations = []
         
         for i, feature_name in enumerate(self.feature_names):
@@ -147,10 +175,7 @@ class EnsembleDetector(FaultDetector):
             
             feature_deviations.append((feature_name, float(max_zscore)))
         
-        # Sort by deviation (highest first)
         feature_deviations.sort(key=lambda x: x[1], reverse=True)
-        
-        # Return top 5 most anomalous features
         return feature_deviations[:5]
     
     def detect_with_explanation(self, df: pd.DataFrame) -> ExplainableResult:

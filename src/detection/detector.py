@@ -32,17 +32,24 @@ class FaultDetector:
         metrics["rich_idle_ratio"] = rich_ratio
         metrics["rich_idle_count"] = rich_count
 
-        low_voltage_condition = self._low_voltage_condition(df)
-        low_voltage_ratio = float(low_voltage_condition.mean()) if len(df) else 0.0
-        low_voltage_min = float(df["Tensão do módulo"].min()) if "Tensão do módulo" in df else np.nan
+        # Check voltage if column exists
+        if "Tensão do módulo" in df.columns:
+            low_voltage_condition = self._low_voltage_condition(df)
+            low_voltage_ratio = float(low_voltage_condition.mean()) if len(df) else 0.0
+            low_voltage_min = float(df["Tensão do módulo"].min())
+            voltage_ok = (
+                low_voltage_min <= LOW_VOLTAGE_MIN_THRESHOLD
+                or low_voltage_ratio >= LOW_VOLTAGE_RATIO_THRESHOLD
+            )
+        else:
+            low_voltage_ratio = 0.0
+            low_voltage_min = np.nan
+            voltage_ok = False
+        
         metrics["low_voltage_ratio"] = low_voltage_ratio
         metrics["low_voltage_min"] = low_voltage_min
 
         rich_ok = rich_ratio >= RICH_IDLE_THRESHOLD_RATIO
-        voltage_ok = (
-            (not np.isnan(low_voltage_min) and low_voltage_min <= LOW_VOLTAGE_MIN_THRESHOLD)
-            or low_voltage_ratio >= LOW_VOLTAGE_RATIO_THRESHOLD
-        )
 
         if rich_ok:
             reasons.append(
@@ -65,8 +72,6 @@ class FaultDetector:
     def _check_inputs(self, df: pd.DataFrame) -> None:
         if "rich_idle_score" not in df.columns:
             raise ValueError("Feature column 'rich_idle_score' missing; run feature engineering first")
-        if "Tensão do módulo" not in df.columns:
-            raise ValueError("Column 'Tensão do módulo' missing from dataset")
 
     def _rich_idle_condition(self, df: pd.DataFrame) -> pd.Series:
         return df["rich_idle_score"].fillna(0) >= 2

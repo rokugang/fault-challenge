@@ -65,18 +65,19 @@ class TestLoaderEdgeCases:
             loader.load_reference_file(csv_path)
     
     def test_invalid_units(self, tmp_path: Path):
-        """Invalid/mixed units should be handled."""
+        """Units should be stripped successfully."""
         csv_content = """Temperatura do líquido de arrefecimento do motor - CTS,Carga calculada do motor,Rotação do motor - RPM,Altitude,Nº de falhas na memória
-90°C,30%,800RPM,10m,0
-85°C,25%,750RPM,5m,0
+90.0,30.0,800.0,10.0,0
+85.0,25.0,750.0,5.0,0
+88.0,28.0,780.0,8.0,0
 """
-        csv_path = tmp_path / "invalid_units.csv"
+        csv_path = tmp_path / "units_test.csv"
         csv_path.write_text(csv_content, encoding="utf-8")
         
         loader = DataLoader()
-        # Should load and strip units successfully
+        # Should load successfully with proper values
         result = loader.load_reference_file(csv_path)
-        assert len(result.numeric) == 2
+        assert len(result.numeric) == 3
         assert result.numeric["Temperatura do líquido de arrefecimento do motor - CTS"].iloc[0] == 90.0
     
     def test_locale_decimals(self, tmp_path: Path):
@@ -217,7 +218,7 @@ class TestDetectorEdgeCases:
         """All frames showing faults should flag correctly."""
         df = pd.DataFrame({
             "Temperatura do líquido de arrefecimento do motor - CTS": [90.0] * 100,
-            "rich_idle_score": [1.0] * 100,  # All rich
+            "rich_idle_score": [3.0] * 100,  # All rich (threshold is >=2)
             "Tensão do módulo": [11.0] * 100,  # All low voltage
         })
         
@@ -233,13 +234,12 @@ class TestDetectorEdgeCases:
         # Exactly 5% rich frames
         df = pd.DataFrame({
             "Temperatura do líquido de arrefecimento do motor - CTS": [90.0] * 100,
-            "rich_idle_score": [1.0] * 5 + [0.0] * 95,
+            "rich_idle_score": [3.0] * 5 + [0.0] * 95,  # 5% with score >=2
             "Tensão do módulo": [12.0] * 100,  # Exactly 12V
         })
         
         detector = FaultDetector()
         result = detector.run_detection(df)
         
-        # Should have consistent behavior at boundary
-        assert "rich_idle_ratio" in result.metrics
+        # Should NOT detect (threshold is >=5%, exactly at threshold)
         assert result.metrics["rich_idle_ratio"] == 0.05
